@@ -150,7 +150,6 @@ if ( algolia_php_version_check() && algolia_wp_version_check() ) {
 	add_action( 'admin_notices', 'algolia_requirements_error_notice' );
 }
 
-// Prevent WordPress from showing update notifications for this plugin
 add_filter('site_transient_update_plugins', function ($transient) {
     if ( isset($transient->response['wp-search-with-algolia/wp-search-with-algolia.php']) ) {
         unset($transient->response['wp-search-with-algolia/wp-search-with-algolia.php']);
@@ -158,14 +157,8 @@ add_filter('site_transient_update_plugins', function ($transient) {
     return $transient;
 });
 
-// Prevent WordPress from checking for plugin updates
-remove_action('load-update-core.php', 'wp_update_plugins');
-add_filter('pre_site_transient_update_plugins', '__return_null');
-add_filter('pre_transient_update_plugins', '__return_null');
-
-// Disable automatic updates for this plugin
 add_filter('auto_update_plugin', function ($update, $item) {
-    if ($item->slug === 'wp-search-with-algolia') {
+    if ( isset($item->slug) && $item->slug === 'wp-search-with-algolia' ) {
         return false;
     }
     return $update;
